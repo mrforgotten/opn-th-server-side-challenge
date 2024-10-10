@@ -1,0 +1,264 @@
+{
+	"info": {
+		"_postman_id": "0f7c84e8-cc47-4239-a856-c722667dafea",
+		"name": "question1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17406667"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test01@email.com\",\r\n    \"password\": \"!Test012\",\r\n    \"name\": \"test\",\r\n    \"dob\": \"2000-01-01\",\r\n    \"gender\": \"male\",\r\n    \"address\": {\r\n        \"address1\": \"01/01 street\",\r\n        // \"address2\": \"\",\r\n        \"city\": \"Bangsue\",\r\n        \"province\": \"Bangkok\",\r\n        \"postalCode\": \"10800\",\r\n        \"country\": \"Thailand\"\r\n    },\r\n    \"isSubscribe\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"1test01@email.com\",\r\n    \"name\": \"test\",\r\n    \"dob\": \"2000-01-01\",\r\n    \"gender\": \"male\",\r\n    \"address\": {\r\n        \"address1\": \"01/01 street\",\r\n        // \"address2\": \"\",\r\n        \"city\": \"Bangsue\",\r\n        \"province\": \"Bangkok\",\r\n        \"postalCode\": \"10800\",\r\n        \"country\": \"Thailand\"\r\n    },\r\n    \"isSubscribe\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/update/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"update",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"currentPassword\": \"!Test012\",\r\n    \"newPassword\": \"!T01234aa\",\r\n    \"confirmNewPassword\": \"!T01234aa\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/update-password/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"update-password",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/user/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/user/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test01@email.com\",\r\n    \"password\": \"!Test012\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validateToken",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/validate",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"validate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "revoke-token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/revoke-token",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"revoke-token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImp3dE1vZGlmaWVyIjoiMjJhYTg0ZmUtMiIsImlhdCI6MTcyODU2NzYxMCwiZXhwIjoxNzI4NjU0MDEwfQ.t7u7van20pi5k3ZeqKt_rkzHjZysfsggzYTOYZw0TcMpHMhVnmFWNdZh0Nr7RKeI25Bd-DRyDbXkdYexr7ocbUSHqPXG8xDnKvoDAXIj7EeGHoe80Hl0A-6gpuEFDX6bOswsjWG9A6Vi0zOCrUx649uHboRt_HsqHL4AkdHhuhYU1Ud69hCZwVVYCL7iJWi76x7te0GeWqA83jhF3TZgmJQFEMLeHAD5DsPuhsqLWcThBRDJbl95-R-pRMfwuxz2fydZhhpmUqvZTlcIyNQrnye9HbCa7Lpf5GfxNytxe_5xByDHUaC-aFHtxcefQREGpX7E904s6N6UYezn2L8ymg",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "localhost:3000",
+			"type": "string"
+		}
+	]
+}
