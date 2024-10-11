@@ -1,0 +1,166 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
+}
+
+generator ERD {
+  provider                  = "prisma-erd-generator"
+  output                    = "../erd.svg"
+  mmdcPath                  = "node_modules/.bin"
+  disableEmoji              = true
+  includeRelationFromFields = true
+  disabled                  = true
+}
+
+generator ERDPng {
+  provider                  = "prisma-erd-generator"
+  output                    = "../erd.png"
+  mmdcPath                  = "node_modules/.bin"
+  disableEmoji              = true
+  includeRelationFromFields = true
+  disabled                  = true
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id               Int          @id @default(autoincrement())
+  name             String
+  price            Decimal      @db.Decimal(10, 2)
+  variation_list   Variation[]
+  product_sku_list ProductSku[]
+}
+
+model Variation {
+  id           Int       @id @default(autoincrement())
+  product_id   Int
+  name         String
+  product      Product   @relation(fields: [product_id], references: [id])
+  variant_list Variant[]
+
+  @@unique([product_id, name])
+}
+
+model Variant {
+  id              Int              @id @default(autoincrement())
+  variation_id    Int
+  value           String
+  variation       Variation        @relation(fields: [variation_id], references: [id])
+  product_variant ProductVariant[]
+
+  @@unique([variation_id, value])
+}
+
+model ProductSku {
+  id              Int              @id @default(autoincrement())
+  sku             String           @unique
+  product_id      Int
+  product         Product          @relation(fields: [product_id], references: [id])
+  price           Decimal          @db.Decimal(10, 2)
+  stock_quantity  Int
+  product_variant ProductVariant[]
+  cart_item_list  CartItem[]
+  sales_item_list OrderItem[]
+}
+
+model ProductVariant {
+  id             Int        @id @default(autoincrement())
+  product_sku_id Int
+  product_sku    ProductSku @relation(fields: [product_sku_id], references: [id])
+  variant_id     Int
+  variant        Variant    @relation(fields: [variant_id], references: [id])
+}
+
+enum Gender {
+  male
+  female
+  other
+  hide
+}
+
+model Customer {
+  id         Int                @id @default(autoincrement())
+  name       String
+  age        Int
+  gender     Gender
+  location   CustomerLocation[]
+  order_list Order[]
+}
+
+model CustomerLocation {
+  id          Int      @id
+  is_primary  Boolean?
+  customer_id Int
+  customer    Customer @relation(fields: [customer_id], references: [id])
+  address_1   String
+  address_2   String?
+  city        String
+  province    String
+  f     String
+  postal_code String
+
+  @@unique([customer_id, is_primary])
+}
+
+model CartItem {
+  id             Int        @id @default(autoincrement())
+  customer_id    Int
+  product_sku_id Int
+  product_sku    ProductSku @relation(fields: [product_sku_id], references: [id])
+  quantity       Int
+
+  @@unique([customer_id, product_sku_id])
+}
+
+model Order {
+  id          Int            @id @default(autoincrement())
+  customer_id Int
+  customer    Customer       @relation(fields: [customer_id], references: [id])
+  total_price Decimal        @db.Decimal(10, 2)
+  item_list   OrderItem[]
+  location    OrderLocation?
+}
+
+model OrderItem {
+  id             Int        @id @default(autoincrement())
+  product_sku_id Int
+  product_sku    ProductSku @relation(fields: [product_sku_id], references: [id])
+  quantity       Int
+  price          Decimal    @db.Decimal(10, 2)
+  sales_order_id Int
+  sales_order    Order      @relation(fields: [sales_order_id], references: [id])
+}
+
+model OrderLocation {
+  id          Int     @id @default(autoincrement())
+  order_id    Int     @unique
+  order       Order   @relation(fields: [order_id], references: [id])
+  address_1   String
+  address_2   String?
+  city        String
+  province    String
+  country     String
+  postal_code String
+}
+
+view CustomerFullView {
+  id          Int     @id
+  name        String
+  age         Int
+  gender      Gender
+  address_1   String
+  address_2   String?
+  city        String
+  province    String
+  country     String
+  postal_code String
+}
