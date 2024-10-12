@@ -59,7 +59,7 @@ export class ProductStore {
     this.productIdFreeMap[productId] = freeProductId;
   }
   isFreebieExist(productId: number): boolean {
-    return this.productIdMap[productId] !== undefined;
+    return this.productIdFreeMap[productId] !== undefined;
   }
   getFreebieByProductId(productId: number): number | undefined {
     return this.productIdFreeMap[productId];
