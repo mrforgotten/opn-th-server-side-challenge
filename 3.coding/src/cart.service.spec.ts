@@ -1,10 +1,9 @@
 import {
   CART_ALREADY_DESTROYED,
   CART_ALREADY_EXIST,
-  PRODUCT_NOT_EXIST,
 } from "./cart-error-message";
 import { CartService } from "./cart.service";
-import { Product, ProductAdd, ProductStore } from "./product";
+import { ProductAdd, ProductStore } from "./product";
 
 const ProductList: ProductAdd[] = [
   {
@@ -27,15 +26,31 @@ const ProductList: ProductAdd[] = [
     name: "Product 4",
     price: 500,
   },
+  {
+    id: 5,
+    name: "Product 5",
+    price: 25,
+  },
+  {
+    id: 6,
+    name: "Product 6",
+    price: 220,
+  },
+
+  {
+    id: 7,
+    name: "Product 7",
+    price: 1000,
+  },
 ];
 const freebieList: { productId: number; freebieId: number }[] = [
   {
-    productId: 3,
-    freebieId: 1,
+    productId: 6,
+    freebieId: 5,
   },
   {
-    productId: 4,
-    freebieId: 2,
+    productId: 7,
+    freebieId: 1,
   },
 ];
 
@@ -51,241 +66,126 @@ function mockProduct(): ProductStore {
   return productStore;
 }
 
+const mockedProductStore = mockProduct();
+
 function mockCartService(): CartService {
-  const mockedProductStore = mockProduct();
-  const cartService = new CartService(mockedProductStore);
+  const cartService = new CartService(Object.create(mockedProductStore));
   return cartService;
 }
 
-const TEST_CASE_MESSAGE_BLOCK = "----";
-const TEST_MESSAGE_BLOCK = "==================";
+describe("Test cart service", () => {
+  let service: CartService;
+  beforeEach(() => {
+    service = mockCartService();
+  });
 
-(() => {
-  const cartService = mockCartService();
-
-  const cleanCartService = (
-    fn: () => void = () => {
-      try {
-        cartService.destroy();
-      } catch (e) {}
-    }
-  ) => {
-    fn();
-  };
-
-  function testCartCreate() {
-    let isPass = true;
-    cleanCartService();
-
+  describe("Test create and destroy", () => {
     const testCases: {
-      caseNumber: number;
-      expect: Error | null;
+      case: number;
       input: () => void;
+      expect: Error | null;
     }[] = [
       {
-        caseNumber: 1,
-        expect: null,
+        case: 1,
         input: () => {
-          cartService.create();
+          service.create();
         },
+        expect: null,
       },
       {
-        caseNumber: 2,
-        expect: null,
+        case: 2,
         input: () => {
-          cartService.create();
-          cartService.destroy();
-          cartService.create();
+          service.create();
+          service.create();
         },
-      },
-      {
-        caseNumber: 3,
         expect: new Error(CART_ALREADY_EXIST),
-        input: () => {
-          cartService.create();
-          cartService.create();
-        },
       },
-    ];
-
-    console.log("Test cart create: ");
-
-    for (const tc of testCases) {
-      try {
-        tc.input();
-        if (tc.expect) {
-          isPass = false;
-          console.log(TEST_CASE_MESSAGE_BLOCK);
-          console.log(
-            "  case: %d\nexpect: %s\n   got: null",
-            tc.caseNumber,
-            tc.expect.message
-          );
-          console.log(TEST_CASE_MESSAGE_BLOCK);
-        }
-      } catch (e) {
-        if (!tc.expect || tc.expect?.message !== e.message) {
-          isPass = false;
-          console.log(TEST_CASE_MESSAGE_BLOCK);
-          console.log(
-            "  case: %d\nexpect: %s\n   got: %s",
-            tc.caseNumber,
-            tc.expect?.message,
-            e?.message
-          );
-          console.log(TEST_CASE_MESSAGE_BLOCK);
-        }
-      } finally {
-        cleanCartService();
-      }
-    }
-    console.log("Test cart create %s", isPass ? "success" : "fail");
-    console.log(TEST_MESSAGE_BLOCK);
-  }
-
-  function testCartDestroy() {
-    let isPass = true;
-    cleanCartService();
-
-    const testCases: {
-      caseNumber: number;
-      expect: Error | null;
-      input: () => void;
-    }[] = [
       {
-        caseNumber: 1,
+        case: 3,
+        input: () => {
+          service.create();
+          service.destroy();
+        },
         expect: null,
-        input: () => {
-          cartService.create();
-          cartService.destroy();
-        },
       },
       {
-        caseNumber: 2,
+        case: 4,
+        input: () => {
+          service.destroy();
+        },
         expect: new Error(CART_ALREADY_DESTROYED),
-        input: () => {
-          cartService.destroy();
-        },
       },
       {
-        caseNumber: 3,
+        case: 5,
+        input: () => {
+          service.create();
+          service.destroy();
+          service.destroy();
+        },
         expect: new Error(CART_ALREADY_DESTROYED),
-        input: () => {
-          cartService.create();
-          cartService.destroy();
-          cartService.destroy();
-        },
       },
     ];
+    testCases.forEach((testCase) => {
+      test(`case: ${testCase.case}`, () => {
+        if (testCase.expect) {
+          expect(testCase.input).toThrow(testCase.expect);
+        } else {
+          expect(testCase.input).not.toThrow();
+        }
+      });
+    });
+  });
 
-    console.log("Test cart destroy: ");
-    for (const tc of testCases) {
-      try {
-        tc.input();
-        if (tc.expect) {
-          isPass = false;
-          console.log(TEST_CASE_MESSAGE_BLOCK);
-          console.log(
-            "  case: %d\nexpect: %s\n   got: null",
-            tc.caseNumber,
-            tc.expect.message
-          );
-          console.log(TEST_CASE_MESSAGE_BLOCK);
-        }
-      } catch (e) {
-        if (!tc.expect || tc.expect?.message !== e.message) {
-          isPass = false;
-          console.log(TEST_CASE_MESSAGE_BLOCK);
-          console.log(
-            "  case: %d\nexpect: %s\n   got: %s",
-            tc.caseNumber,
-            tc.expect?.message,
-            e?.message
-          );
-          console.log(TEST_CASE_MESSAGE_BLOCK);
-        }
-      } finally {
-        cleanCartService();
-      }
-    }
-    console.log("Test cart destroy %s", isPass ? "success" : "fail");
-    console.log(TEST_MESSAGE_BLOCK);
-  }
-  function testCartAdd() {
-    const cleanFn = () => {
-      try {
-        cartService.destroy();
-      } catch (e) {
-      } finally {
-        cartService.create();
-      }
-    };
-    cleanCartService(cleanFn);
-    const testCases: {
-      caseNumber: number;
-      expect: Error | null;
-      input: () => void;
-    }[] = [
-      {
-        caseNumber: 1,
-        expect: null,
-        input: () => {
-          cartService.addProductToCart(1, 0);
-        },
-      },
-      {
-        caseNumber: 1,
-        expect: null,
-        input: () => {
-          cartService.addProductToCart(1, 0);
-          cartService.addProductToCart(1, 1);
-        },
-      },
-      {
-        caseNumber: 1,
-        expect: new Error(PRODUCT_NOT_EXIST),
-        input: () => {
-          cartService.addProductToCart(-1, 0);
-        },
-      },
-    ];
+  describe("Test add product, list product, update product, and remove product", () => {
+    beforeEach(() => {
+      service.create();
+    });
+    test("Add product and check if exist", () => {
+      service.addProductToCart(1, 1);
+      expect(service.isProductExist(1)).toBe(true);
+    });
 
-    console.log("Test cart add:");
-    let isPass = true;
-    for (const tc of testCases) {
-      try {
-        tc.input();
-        if (tc.expect !== null) {
-          isPass = false;
-          console.log(TEST_CASE_MESSAGE_BLOCK);
-          console.log(
-            "  case: %d\nexpect: %s\n   got: null",
-            tc.caseNumber,
-            tc.expect.message
-          );
-          console.log(TEST_CASE_MESSAGE_BLOCK);
-        }
-      } catch (e) {
-        if (!tc.expect || tc.expect?.message !== e.message) {
-          isPass = false;
-          console.log(TEST_CASE_MESSAGE_BLOCK);
-          console.log(
-            "  case: %d\nexpect: %s\n   got: %s",
-            tc.caseNumber,
-            tc.expect?.message,
-            e.message
-          );
-          console.log(TEST_CASE_MESSAGE_BLOCK);
-        }
-      } finally {
-        cleanCartService(cleanFn);
-      }
-    }
-    console.log("Test cart add %s", isPass ? "success" : "fail");
-    console.log(TEST_MESSAGE_BLOCK);
-  }
+    test("Add product with negative and check if exist", () => {
+      service.addProductToCart(1, -1);
+      expect(service.isProductExist(1)).toBe(false);
+      service.addProductToCart(1, 0);
+      expect(service.isProductExist(1)).toBe(false);
+      service.addProductToCart(1, 1);
+      expect(service.isProductExist(1)).toBe(true);
+    });
 
-  testCartCreate();
-  testCartDestroy();
-  testCartAdd();
-})();
+    test("List product", () => {
+      const expectation = [
+        {
+          id: 1,
+          name: "Product 1",
+          price: 10,
+          amount: 2,
+          freeAmount: 0,
+          totalAmount: 2,
+          totalPrice: 20,
+        },
+        {
+          id: 2,
+          name: "Product 2",
+          price: 50,
+          amount: 1,
+          freeAmount: 0,
+          totalAmount: 1,
+          totalPrice: 50,
+        },
+      ];
+      service.addProductToCart(1, 1);
+      service.addProductToCart(1, -1);
+      service.addProductToCart(1, 1);
+      service.addProductToCart(2, 1);
+      const list = service.listAllProduct();
+
+      for (const elem of expectation) {
+        expect(list).toEqual(
+          expect.arrayContaining([expect.objectContaining(elem)])
+        );
+      }
+    });
+  });
+});
